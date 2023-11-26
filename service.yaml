@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: amandamariano-playlist-service
+spec:
+  selector:
+    app: amandamariano-playlist
+  ports:
+    - protocol: TCP
+      port: 32165
+      targetPort: 32165

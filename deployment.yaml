@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amanda-playlist-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amanda-playlist
+  template:
+    metadata:
+      labels:
+        app: amanda-playlist
+    spec:
+      volumes:
+        - name: pvc-volume
+          persistentVolumeClaim:
+            claimName: project2-pv-amandamariano
+
+      containers:
+        - name: playlist-api
+          env:
+            - name: version
+              value: "1"
+            - name: FLASK_APP
+              value: "app"
+          image: amandaxm998877/playlist_api:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: pvc-volume
+              mountPath: /app/data
+          ports:
+            - containerPort: 32165
+
+        - name: playlist-gerador-regras-ml
+          image: amandaxm998877/gerador_regras_ml:latest
+          env:
+            - name: DATA
+              value: "https://homepages.dcc.ufmg.br/~cunha/hosted/cloudcomp-2023s2-datasets/2023_spotify_ds1.csv"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: pvc-volume
+              mountPath: /app/data
