@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Recommender</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #1e1e1e;
+            color: #fff;
+        }
+
+        h2 {
+            color: #1db954;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input {
+            padding: 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            width: 60%;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #1db954;
+            color: #fff;
+            border: none;
+            font-size: 16px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        #songInputs {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .songInput {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        label {
+            width: 20%;
+            text-align: right;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .removeButton {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Playlist Recommender</h2>
+    <form id="playlistForm">
+        <div id="songInputs">
+            <div class="songInput">
+                <label for="song1">Song:</label>
+                <input type="text" name="song1" required>
+                <button type="button" class="removeButton" onclick="removeSongInput(this)">Remove</button>
+            </div>
+        </div>
+
+        <button type="button" onclick="addSongInput()">Add Song</button>
+        <button type="button" onclick="recommendPlaylist()">Get Recommendations</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px; font-weight: bold; color: #1db954; font-size: 18px; background-color: #191414; padding: 10px; border-radius: 4px;"></div>
+    <div id="modelInfo" style="margin-top: 20px; color: #1db954; font-size: 16px;"></div>
+
+    <script>
+        // Add a new song input field
+        function addSongInput() {
+            var songInputs = document.getElementById("songInputs");
+            var newInput = document.createElement("div");
+            newInput.className = "songInput";
+            newInput.innerHTML = `
+                <label for="song">Song:</label>
+                <input type="text" name="song" required>
+                <button type="button" class="removeButton" onclick="removeSongInput(this)">Remove</button>
+            `;
+            songInputs.appendChild(newInput);
+        }
+
+        // Remove the song input field
+        function removeSongInput(button) {
+            var songInputs = document.getElementById("songInputs");
+            songInputs.removeChild(button.parentNode);
+        }
+
+        // Send a request to recommend playlist
+        function recommendPlaylist() {
+            var songInputs = document.querySelectorAll(".songInput input");
+            var songs = Array.from(songInputs).map(input => input.value);
+
+            var data = {
+                "songs": songs
+            };
+
+            fetch("api/recommender", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    document.getElementById("result").innerHTML = "Recommended Playlist: " + result.playlist.join(", ");
+                    document.getElementById("modelInfo").innerHTML = "Version: " + result.version + "<br>Model Date: " + result.model_date;
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    document.getElementById("result").innerHTML = "Error occurred. Please check the console for details.";
+                });
+        }
+    </script>
+</body>
+
+</html>
