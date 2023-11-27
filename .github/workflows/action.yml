@@ -32,12 +32,13 @@ jobs:
           sed -i "s/^date_push: .*/date_push: \"$DATE_PUSH\"/" ./deployment.yaml
 
           # Configurar a identidade do usuário para o commit
-          git config user.email "mandaxaviermariano10@gmail.com"
+          git config user.email "amandaxaviermariano10@gmail.com"
           git config user.name "amandaxm"
 
           # Confirmar as alterações no version.txt
-          git add version.txt
+          git add .
           git commit -m "Incrementar versão para $NOVA_VERSAO"
+          git push
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
@@ -52,12 +53,3 @@ jobs:
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./api
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
 
-      - name: Commit and push changes to deployment.yaml
-        run: |
-          # Configurar a identidade do usuário para o commit
-          git config user.email "mandaxaviermariano10@gmail.com"
-          git config user.name "amandaxm"
-          
-          git add deployment.yaml
-          git commit -m "Incrementar versão e adicionar data do push [skip ci]"
-          git push origin master
