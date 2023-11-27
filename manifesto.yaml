@@ -1,0 +1,230 @@
+metadata:
+  creationTimestamp: "2023-11-27T00:58:27Z"
+  generation: 284
+  managedFields:
+  - apiVersion: argoproj.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:destination:
+          .: {}
+          f:namespace: {}
+          f:server: {}
+        f:project: {}
+        f:source:
+          .: {}
+          f:path: {}
+          f:repoURL: {}
+        f:syncPolicy:
+          .: {}
+          f:automated: {}
+      f:status:
+        .: {}
+        f:health: {}
+        f:summary: {}
+        f:sync:
+          .: {}
+          f:comparedTo:
+            .: {}
+            f:destination: {}
+            f:source: {}
+    manager: argocd-server
+    operation: Update
+    time: "2023-11-27T02:17:40Z"
+  - apiVersion: argoproj.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        f:controllerNamespace: {}
+        f:health:
+          f:status: {}
+        f:history: {}
+        f:operationState:
+          .: {}
+          f:finishedAt: {}
+          f:message: {}
+          f:operation:
+            .: {}
+            f:initiatedBy:
+              .: {}
+              f:automated: {}
+            f:retry:
+              .: {}
+              f:limit: {}
+            f:sync:
+              .: {}
+              f:revision: {}
+          f:phase: {}
+          f:startedAt: {}
+          f:syncResult:
+            .: {}
+            f:resources: {}
+            f:revision: {}
+            f:source:
+              .: {}
+              f:path: {}
+              f:repoURL: {}
+        f:reconciledAt: {}
+        f:resources: {}
+        f:sourceType: {}
+        f:summary:
+          f:images: {}
+        f:sync:
+          f:comparedTo:
+            f:destination:
+              f:namespace: {}
+              f:server: {}
+            f:source:
+              f:path: {}
+              f:repoURL: {}
+          f:revision: {}
+          f:status: {}
+    manager: argocd-application-controller
+    operation: Update
+    time: "2023-11-27T11:59:41Z"
+  name: amandamariano-project
+  namespace: argocd
+  resourceVersion: "1910089"
+  uid: 047923de-fcfa-48b4-a8c9-436dd2170c00
+spec:
+  destination:
+    namespace: amandamariano
+    server: https://kubernetes.default.svc
+  project: amandamariano-project
+  source:
+    path: .
+    repoURL: https://github.com/amandaxm/tp2cc.git
+  syncPolicy:
+    automated: {}
+status:
+  controllerNamespace: argocd
+  health:
+    status: Healthy
+  history:
+  - deployStartedAt: "2023-11-27T00:58:28Z"
+    deployedAt: "2023-11-27T00:58:28Z"
+    id: 0
+    revision: 25ee0c33b596abd807f463a95decc4b78f3eb212
+    source:
+      path: .
+      repoURL: https://github.com/amandaxm/tp2cc.git
+  - deployStartedAt: "2023-11-27T01:14:43Z"
+    deployedAt: "2023-11-27T01:14:44Z"
+    id: 1
+    revision: 6cf03ef97965e2d0b169752b604a5ab6eb133fae
+    source:
+      path: .
+      repoURL: https://github.com/amandaxm/tp2cc.git
+  - deployStartedAt: "2023-11-27T01:26:43Z"
+    deployedAt: "2023-11-27T01:26:43Z"
+    id: 2
+    revision: 86751011a04b9c24b336d9399af4b2d41bd5ab5a
+    source:
+      path: .
+      repoURL: https://github.com/amandaxm/tp2cc.git
+  - deployStartedAt: "2023-11-27T01:47:21Z"
+    deployedAt: "2023-11-27T01:47:21Z"
+    id: 3
+    revision: 5b95650b7a456283f2d8b064cad4a14b329c8641
+    source:
+      path: .
+      repoURL: https://github.com/amandaxm/tp2cc.git
+  - deployStartedAt: "2023-11-27T01:56:42Z"
+    deployedAt: "2023-11-27T01:56:43Z"
+    id: 4
+    revision: 9e94dc0b626bbc63c7f190618e9e1664c09cd31a
+    source:
+      path: .
+      repoURL: https://github.com/amandaxm/tp2cc.git
+  - deployStartedAt: "2023-11-27T02:17:41Z"
+    deployedAt: "2023-11-27T02:17:42Z"
+    id: 5
+    revision: 5f5e40d6f34b5da481860a3c674c31b433752e2d
+    source:
+      path: .
+      repoURL: https://github.com/amandaxm/tp2cc.git
+  operationState:
+    finishedAt: "2023-11-27T02:17:42Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        automated: true
+      retry:
+        limit: 5
+      sync:
+        revision: 5f5e40d6f34b5da481860a3c674c31b433752e2d
+    phase: Succeeded
+    startedAt: "2023-11-27T02:17:41Z"
+    syncResult:
+      resources:
+      - group: ""
+        hookPhase: Running
+        kind: PersistentVolumeClaim
+        message: persistentvolumeclaim/project2-pv-amandamariano unchanged
+        name: project2-pv-amandamariano
+        namespace: amandamariano
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: ""
+        hookPhase: Running
+        kind: Service
+        message: service/amandamariano-playlist-service unchanged
+        name: amandamariano-playlist-service
+        namespace: amandamariano
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        kind: Deployment
+        message: deployment.apps/amanda-playlist-deployment configured
+        name: amanda-playlist-deployment
+        namespace: amandamariano
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      revision: 5f5e40d6f34b5da481860a3c674c31b433752e2d
+      source:
+        path: .
+        repoURL: https://github.com/amandaxm/tp2cc.git
+  reconciledAt: "2023-11-27T11:59:41Z"
+  resources:
+  - health:
+      status: Healthy
+    kind: PersistentVolumeClaim
+    name: project2-pv-amandamariano
+    namespace: amandamariano
+    status: Synced
+    version: v1
+  - health:
+      status: Healthy
+    kind: Service
+    name: amandamariano-playlist-service
+    namespace: amandamariano
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: amanda-playlist-deployment
+    namespace: amandamariano
+    status: Synced
+    version: v1
+  sourceType: Directory
+  summary:
+    images:
+    - amandaxm998877/gerador_regras_ml:latest
+    - amandaxm998877/playlist_api:0.02
+  sync:
+    comparedTo:
+      destination:
+        namespace: amandamariano
+        server: https://kubernetes.default.svc
+      source:
+        path: .
+        repoURL: https://github.com/amandaxm/tp2cc.git
+    revision: 5f5e40d6f34b5da481860a3c674c31b433752e2d
+    status: Synced
