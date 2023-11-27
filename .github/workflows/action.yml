@@ -23,5 +23,5 @@ jobs:
 
     - name: Build and push Docker image for playlist_api
       run: |
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./playlist_api
+        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./api
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
