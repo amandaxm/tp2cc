@@ -1,62 +1,56 @@
-name: Construir e Enviar Imagens Docker
-
 on:
   push:
-    branches:
-      - master
+    paths:
+      - 'gerador_regras/**'
+      - 'api/**'
 
 jobs:
-  build:
+  build_gerador_regras_ml:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checar código
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Determinar alterações em gerador_regras_ml
-      id: diff_gerador_regras
-      run: |
-        if [[ "$(git rev-list --count ${{ github.sha }})" -eq 1 ]]; then
-          DIFF=$(git diff --name-only ${{ github.sha }})
-        else
-          DIFF=$(git diff --name-only HEAD^ HEAD)
-        fi
-
-        echo "Diff gerador_regras: $DIFF"
-
-        # Checar se há alterações nos arquivos relevantes
-        if echo "$DIFF" | grep -E "(^|/)gerador_regras/|^Dockerfile"; then
-          echo "changes_gerador_regras=true" >> $GITHUB_ENV
-        else
-          echo "changes_gerador_regras=false" >> $GITHUB_ENV
-        fi
-
-    - name: Determinar alterações em playlist_api
-      id: diff_playlist_api
-      run: |
-        if [[ "$(git rev-list --count ${{ github.sha }})" -eq 1 ]]; then
-          DIFF=$(git diff --name-only ${{ github.sha }})
-        else
-          DIFF=$(git diff --name-only HEAD^ HEAD)
-
-          echo "Diff playlist_api: $DIFF"
-
-          # Checar se há alterações nos arquivos relevantes
-          if echo "$DIFF" | grep -E "(^|/)api/|^Dockerfile"; then
-            echo "changes_playlist_api=true" >> $GITHUB_ENV
+      - name: Check for changes in gerador_regras directory
+        id: gerador_changed
+        run: |
+          if [[ $(git diff --name-only ${{ github.event.before }} ${{ github.sha }}) == *"gerador_regras/"* ]]; then
+            echo "::set-output name=changed::true"
           else
-            echo "changes_playlist_api=false" >> $GITHUB_ENV
+            echo "::set-output name=changed::false"
           fi
-        fi
 
-    - name: Construir e Enviar Imagem Docker para gerador_regras_ml
-      if: env.changes_gerador_regras == 'true'
-      run: |
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest ./gerador_regras
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
-    - name: Construir e Enviar Imagem Docker para playlist_api
-      if: env.changes_playlist_api == 'true'
-      run: |
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./api
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
+      - name: Build and push Docker image for gerador_regras_ml
+        if: steps.gerador_changed.outputs.changed == 'true'
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest ./gerador_regras
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest
+
+  build_playlist_api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check for changes in api directory
+        id: api_changed
+        run: |
+          if [[ $(git diff --name-only ${{ github.event.before }} ${{ github.sha }}) == *"api/"* ]]; then
+            echo "::set-output name=changed::true"
+          else
+            echo "::set-output name=changed::false"
+          fi
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      - name: Build and push Docker image for playlist_api
+        if: steps.api_changed.outputs.changed == 'true'
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./api
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
