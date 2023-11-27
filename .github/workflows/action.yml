@@ -20,6 +20,7 @@ jobs:
           DIFF=$(git diff --name-only ${{ github.sha }})
         else
           DIFF=$(git diff --name-only HEAD^ HEAD)
+        fi
 
         # Checar se há alterações nos arquivos relevantes
         if echo "$DIFF" | grep -E "(^|/)gerador_regras/|^Dockerfile"; then
@@ -36,11 +37,12 @@ jobs:
         else
           DIFF=$(git diff --name-only HEAD^ HEAD)
 
-        # Checar se há alterações nos arquivos relevantes
-        if echo "$DIFF" | grep -E "(^|/)api/|^Dockerfile"; then
-          echo "::set-output name=changes_playlist_api::true"
-        else
-          echo "::set-output name=changes_playlist_api::false"
+          # Checar se há alterações nos arquivos relevantes
+          if echo "$DIFF" | grep -E "(^|/)api/|^Dockerfile"; then
+            echo "::set-output name=changes_playlist_api::true"
+          else
+            echo "::set-output name=changes_playlist_api::false"
+          fi
         fi
 
     - name: Construir e Enviar Imagem Docker para gerador_regras_ml
