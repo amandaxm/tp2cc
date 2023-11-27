@@ -24,7 +24,7 @@ spec:
               value: "1"
             - name: FLASK_APP
               value: "app"
-          image: amandaxm998877/playlist_api:latest
+          image: amandaxm998877/playlist_api:0.02
           imagePullPolicy: Always
           volumeMounts:
             - name: pvc-volume
