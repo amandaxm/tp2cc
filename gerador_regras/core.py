@@ -26,7 +26,7 @@ def treinar_e_salvar_modelo(dados, min_sup=0.07, min_conf=0.5, nome_arquivo='dat
         conjuntos_frequentes = apriori(df_encoded, min_support=min_sup, use_colnames=True)
         regras = association_rules(conjuntos_frequentes, metric="confidence", min_threshold=min_conf)
         salvar_regras(regras, nome_arquivo)
-        time.sleep(300)
+        time.sleep(304)
 
 if __name__ == "__main__":
     while True:
