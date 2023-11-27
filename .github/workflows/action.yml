@@ -18,10 +18,10 @@ jobs:
 
     - name: Build and push Docker image for gerador_regras_ml
       run: |
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest ../gerador_regras
+        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest ./gerador_regras
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest
 
     - name: Build and push Docker image for playlist_api
       run: |
-        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ../playlist_api
+        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./playlist_api
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
