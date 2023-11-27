@@ -16,7 +16,10 @@ jobs:
     - name: Determinar alterações em gerador_regras_ml
       id: diff_gerador_regras
       run: |
-        DIFF=$(git diff --name-only HEAD^ HEAD)
+        if [[ "$(git rev-list --count ${{ github.sha }})" -eq 1 ]]; then
+          DIFF=$(git diff --name-only ${{ github.sha }})
+        else
+          DIFF=$(git diff --name-only HEAD^ HEAD)
 
         # Checar se há alterações nos arquivos relevantes
         if echo "$DIFF" | grep -E "(^|/)gerador_regras/|^Dockerfile"; then
@@ -28,7 +31,10 @@ jobs:
     - name: Determinar alterações em playlist_api
       id: diff_playlist_api
       run: |
-        DIFF=$(git diff --name-only HEAD^ HEAD)
+        if [[ "$(git rev-list --count ${{ github.sha }})" -eq 1 ]]; then
+          DIFF=$(git diff --name-only ${{ github.sha }})
+        else
+          DIFF=$(git diff --name-only HEAD^ HEAD)
 
         # Checar se há alterações nos arquivos relevantes
         if echo "$DIFF" | grep -E "(^|/)api/|^Dockerfile"; then
