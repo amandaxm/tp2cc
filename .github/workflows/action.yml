@@ -22,11 +22,13 @@ jobs:
           DIFF=$(git diff --name-only HEAD^ HEAD)
         fi
 
+        echo "Diff gerador_regras: $DIFF"
+
         # Checar se há alterações nos arquivos relevantes
         if echo "$DIFF" | grep -E "(^|/)gerador_regras/|^Dockerfile"; then
-          echo "::set-output name=changes_gerador_regras::true"
+          echo "changes_gerador_regras=true" >> $GITHUB_ENV
         else
-          echo "::set-output name=changes_gerador_regras::false"
+          echo "changes_gerador_regras=false" >> $GITHUB_ENV
         fi
 
     - name: Determinar alterações em playlist_api
@@ -37,22 +39,24 @@ jobs:
         else
           DIFF=$(git diff --name-only HEAD^ HEAD)
 
+          echo "Diff playlist_api: $DIFF"
+
           # Checar se há alterações nos arquivos relevantes
           if echo "$DIFF" | grep -E "(^|/)api/|^Dockerfile"; then
-            echo "::set-output name=changes_playlist_api::true"
+            echo "changes_playlist_api=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=changes_playlist_api::false"
+            echo "changes_playlist_api=false" >> $GITHUB_ENV
           fi
         fi
 
     - name: Construir e Enviar Imagem Docker para gerador_regras_ml
-      if: steps.diff_gerador_regras.outputs.changes_gerador_regras == 'true'
+      if: env.changes_gerador_regras == 'true'
       run: |
         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest ./gerador_regras
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest
 
     - name: Construir e Enviar Imagem Docker para playlist_api
-      if: steps.diff_playlist_api.outputs.changes_playlist_api == 'true'
+      if: env.changes_playlist_api == 'true'
       run: |
         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./api
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
