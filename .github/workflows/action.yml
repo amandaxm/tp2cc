@@ -16,6 +16,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Incrementar a versão e salvar no deployment.yaml
+        run: |
+          # Incrementar a versão
+          VERSAO_ATUAL=$(cat version.txt)
+          NOVA_VERSAO=$(python -c "print('.'.join(str(int(x) + 1) for x in '$VERSAO_ATUAL'.split('.')))")
+          echo "$NOVA_VERSAO" > version.txt
+          echo "Versão incrementada para $NOVA_VERSAO"
+
+          # Atualizar a versão no deployment.yaml
+          sed -i "s/^version: .*/version: $NOVA_VERSAO/" ./deployment.yaml
+
+          # Adicionar a data do push no formato de timestamp
+          # DATE_PUSH=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          # sed -i "s/^date_push: .*/date_push: \"$DATE_PUSH\"/" ./deployment.yaml
+
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
@@ -28,3 +43,12 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./api
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
+
+      - name: Commit and push changes to deployment.yaml
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          git add deployment.yaml
+          git commit -m "alterado version [skip ci]"
+          git push origin master
