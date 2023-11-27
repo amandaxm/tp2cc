@@ -1,14 +1,15 @@
+name: Build and Push Docker Images
+
 on:
   push:
     branches:
       - master
     paths:
-      - 'gerador_regras/**'
       - 'api/**'
+      - 'gerador_regras/**'
 
 jobs:
-  build_gerador_regras_ml:
-    if: contains(github.event.head_commit.modified, 'gerador_regras/')
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,17 +23,6 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest ./gerador_regras
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest
-
-  build_playlist_api:
-    if: contains(github.event.head_commit.modified, 'api/')
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build and push Docker image for playlist_api
         run: |
