@@ -1,4 +1,4 @@
-name: Build and Push Docker Images
+name: Construir e Enviar Imagens Docker
 
 on:
   push:
@@ -10,18 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checar código
       uses: actions/checkout@v2
 
-    - name: Log in to Docker Hub
+    - name: Incrementar a versão no código
+      run: |
+        # Incrementar a versão
+        VERSAO_ATUAL=$(cat version.txt)
+        NOVA_VERSAO=$(python -c "print('.'.join(str(int(x) + 1) for x in '$VERSAO_ATUAL'.split('.')))")
+        echo "$NOVA_VERSAO" > version.txt
+        echo "Versão incrementada para $NOVA_VERSAO"
+      working-directory: ./
+
+    - name: Atualizar a versão no deployment.yaml
+      run: |
+        # Atualizar a versão no deployment.yaml
+        sed -i "s/^version: .*/version: $NOVA_VERSAO/" ./deployment.yaml
+      working-directory: ./
+
+    - name: Logar no Docker Hub
       run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
-    - name: Build and push Docker image for gerador_regras_ml
+    - name: Construir e enviar imagem Docker para gerador_regras_ml
       run: |
         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest ./gerador_regras
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest
 
-    - name: Build and push Docker image for playlist_api
+    - name: Construir e enviar imagem Docker para playlist_api
       run: |
         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./api
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
