@@ -13,30 +13,38 @@ jobs:
     - name: Checar código
       uses: actions/checkout@v2
 
-    - name: Incrementar a versão no código
+    - name: Determinar alterações em gerador_regras_ml
+      id: diff_gerador_regras
       run: |
-        # Incrementar a versão
-        VERSAO_ATUAL=$(cat version.txt)
-        NOVA_VERSAO=$(python -c "print('.'.join(str(int(x) + 1) for x in '$VERSAO_ATUAL'.split('.')))")
-        echo "$NOVA_VERSAO" > version.txt
-        echo "Versão incrementada para $NOVA_VERSAO"
-      working-directory: ./
+        DIFF=$(git diff --name-only ${{ github.sha }}^ ${{ github.sha }})
 
-    - name: Atualizar a versão no deployment.yaml
+        # Checar se há alterações nos arquivos relevantes
+        if echo "$DIFF" | grep -E "(^|/)gerador_regras/|^Dockerfile"; then
+          echo "::set-output name=changes_gerador_regras::true"
+        else
+          echo "::set-output name=changes_gerador_regras::false"
+        fi
+
+    - name: Determinar alterações em playlist_api
+      id: diff_playlist_api
       run: |
-        # Atualizar a versão no deployment.yaml
-        sed -i "s/^version: .*/version: $NOVA_VERSAO/" ./deployment.yaml
-      working-directory: ./
+        DIFF=$(git diff --name-only ${{ github.sha }}^ ${{ github.sha }})
 
-    - name: Logar no Docker Hub
-      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+        # Checar se há alterações nos arquivos relevantes
+        if echo "$DIFF" | grep -E "(^|/)api/|^Dockerfile"; then
+          echo "::set-output name=changes_playlist_api::true"
+        else
+          echo "::set-output name=changes_playlist_api::false"
+        fi
 
-    - name: Construir e enviar imagem Docker para gerador_regras_ml
+    - name: Construir e Enviar Imagem Docker para gerador_regras_ml
+      if: steps.diff_gerador_regras.outputs.changes_gerador_regras == 'true'
       run: |
         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest ./gerador_regras
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gerador_regras_ml:latest
 
-    - name: Construir e enviar imagem Docker para playlist_api
+    - name: Construir e Enviar Imagem Docker para playlist_api
+      if: steps.diff_playlist_api.outputs.changes_playlist_api == 'true'
       run: |
         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest ./api
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/playlist_api:latest
