@@ -36,7 +36,7 @@ spec:
           image: amandaxm998877/gerador_regras_ml:latest
           env:
             - name: DATA
-              value: "https://homepages.dcc.ufmg.br/~cunha/hosted/cloudcomp-2023s2-datasets/2023_spotify_ds1.csv"
+              value: "https://homepages.dcc.ufmg.br/~cunha/hosted/cloudcomp-2023s2-datasets/2023_spotify_ds2.csv"
           imagePullPolicy: Always
           volumeMounts:
             - name: pvc-volume
