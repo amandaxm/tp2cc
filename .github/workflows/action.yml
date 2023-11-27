@@ -28,8 +28,12 @@ jobs:
           sed -i "s/^version: .*/version: $NOVA_VERSAO/" ./deployment.yaml
 
           # Adicionar a data do push no formato de timestamp
-          # DATE_PUSH=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          # sed -i "s/^date_push: .*/date_push: \"$DATE_PUSH\"/" ./deployment.yaml
+          DATE_PUSH=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          sed -i "s/^date_push: .*/date_push: \"$DATE_PUSH\"/" ./deployment.yaml
+
+          # Confirmar as alterações no version.txt
+          git add version.txt
+          git commit -m "Incrementar versão para $NOVA_VERSAO"
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
@@ -50,5 +54,5 @@ jobs:
           git config --global user.name "GitHub Actions"
 
           git add deployment.yaml
-          git commit -m "alterado version [skip ci]"
+          git commit -m "Incrementar versão e adicionar data do push [skip ci]"
           git push origin master
