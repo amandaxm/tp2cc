@@ -41,8 +41,8 @@ def recommend():
             'version': version,
             'model_date': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+    except Exception as ex:
+        return jsonify({'error': str(ex)}), 400
 
 if __name__ == '__main__':
     app.run(port=32165, debug=True)
